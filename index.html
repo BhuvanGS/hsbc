@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BCO PROJECTs</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="header">
+        <div class="logo" aria-label="HSBC">
+          <svg class="logo-mark" viewBox="0 0 48 48" aria-hidden="true">
+            <polygon points="24,4 44,14 44,34 24,44 4,34 4,14" fill="#db0011" />
+            <polygon points="24,10 38,18 38,30 24,38 10,30 10,18" fill="#fff" />
+            <polygon points="24,16 32,21 32,27 24,32 16,27 16,21" fill="#db0011" />
+          </svg>
+          <span class="logo-text">HSBC</span>
+        </div>
+        <h1 class="title">BCO PROJECTs</h1>
+        <div class="header-actions">
+          <button type="button" class="icon-btn refresh" id="btn-refresh" title="Refresh data" aria-label="Refresh">
+            ↻
+          </button>
+          <button type="button" class="icon-btn add" id="btn-add" title="Add new project" aria-label="Add project">
+            +
+          </button>
+        </div>
+      </header>
+
+      <section class="kanban" aria-label="Project board">
+        <div class="column planning" data-column="planning">
+          <div class="column-header">PLANNING</div>
+          <div class="column-body" data-status="Planning"></div>
+        </div>
+        <div class="column in-progress" data-column="in-progress">
+          <div class="column-header">IN - PROGRESS</div>
+          <div class="column-body" data-status="In-Progress"></div>
+        </div>
+        <div class="column completed" data-column="completed">
+          <div class="column-header">COMPLETED</div>
+          <div class="column-body" data-status="Completed"></div>
+        </div>
+      </section>
+
+      <section class="table-section" aria-label="Projects table">
+        <div class="table-toolbar">
+          <label for="filter-input">Filter:</label>
+          <input
+            type="search"
+            id="filter-input"
+            placeholder="Search projects (name, owner, status, resource…)"
+            autocomplete="off"
+          />
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Project Name</th>
+              <th>Owner</th>
+              <th>Status</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Assigned Resource</th>
+              <th>Comments</th>
+            </tr>
+          </thead>
+          <tbody id="projects-table-body"></tbody>
+        </table>
+      </section>
+    </div>
+
+    <div class="modal-overlay" id="edit-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal">
+        <h2 id="modal-title">Edit Project</h2>
+        <div class="form-row">
+          <label for="field-name">Project Name</label>
+          <input type="text" id="field-name" required />
+        </div>
+        <div class="form-row">
+          <label for="field-owner">Owner</label>
+          <input type="text" id="field-owner" />
+        </div>
+        <div class="form-row">
+          <label for="field-status">Status</label>
+          <select id="field-status">
+            <option value="Planning">Planning</option>
+            <option value="In-Progress">In-Progress</option>
+            <option value="Completed">Completed</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="field-start">Start Date</label>
+          <input type="date" id="field-start" />
+        </div>
+        <div class="form-row">
+          <label for="field-end">End Date</label>
+          <input type="date" id="field-end" />
+        </div>
+        <div class="form-row">
+          <label for="field-resource">Assigned Resource</label>
+          <input type="text" id="field-resource" />
+        </div>
+        <div class="form-row">
+          <label for="field-comments">Comments</label>
+          <textarea id="field-comments"></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="modal-cancel">Cancel</button>
+          <button type="button" class="btn btn-primary" id="modal-save">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="js/app.js"></script>
+  </body>
+</html>
