@@ -11,6 +11,8 @@
     completed: STATUS.COMPLETED,
   };
 
+  const STORAGE_KEY = 'bco-projects-v1';
+
   const DEFAULT_PROJECTS = [
     {
       id: '1',
@@ -104,6 +106,70 @@
     const nums = projects.map((p) => parseInt(p.id, 10)).filter((n) => !Number.isNaN(n));
     const max = nums.length ? Math.max(...nums) : 0;
     return String(max + 1);
+  }
+
+  function normalizeProject(raw) {
+    if (!raw || typeof raw !== 'object') return null;
+    const id = raw.id != null ? String(raw.id) : '';
+    if (!id) return null;
+    return {
+      id,
+      projectName: String(raw.projectName ?? ''),
+      owner: String(raw.owner ?? ''),
+      status: raw.status || STATUS.PLANNING,
+      startDate: raw.startDate ? String(raw.startDate) : '',
+      endDate: raw.endDate ? String(raw.endDate) : '',
+      assignedResource: String(raw.assignedResource ?? ''),
+      comments: String(raw.comments ?? ''),
+    };
+  }
+
+  function loadStoredProjects() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) return null;
+      const list = parsed.map(normalizeProject).filter(Boolean);
+      return list.length ? list : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function persistProjects() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
+    } catch {
+      showToast('Could not save changes locally');
+    }
+  }
+
+  async function fetchSeedProjects() {
+    try {
+      const res = await fetch('data/projects.json', { cache: 'no-store' });
+      if (!res.ok) throw new Error('Failed to load');
+      const data = await res.json();
+      if (!Array.isArray(data)) throw new Error('Invalid data');
+      const list = data.map(normalizeProject).filter(Boolean);
+      return list.length ? list : DEFAULT_PROJECTS.map((p) => ({ ...p }));
+    } catch {
+      return DEFAULT_PROJECTS.map((p) => ({ ...p }));
+    }
+  }
+
+  function mergeRemoteProjects(remote) {
+    const merged = projects.map((p) => ({ ...p }));
+    const seen = new Set(merged.map((p) => p.id));
+
+    remote.forEach((item) => {
+      const remoteProject = normalizeProject(item);
+      if (!remoteProject || seen.has(remoteProject.id)) return;
+      merged.push(remoteProject);
+      seen.add(remoteProject.id);
+    });
+
+    return merged.length ? merged : projects;
   }
 
   function matchesFilter(project) {
@@ -246,6 +312,7 @@
   function render() {
     renderKanban();
     renderTable();
+    persistProjects();
   }
 
   function onDragStart(e) {
@@ -348,19 +415,23 @@
   }
 
   async function refreshData(showMessage) {
-    try {
-      const res = await fetch('data/projects.json', { cache: 'no-store' });
-      if (!res.ok) throw new Error('Failed to load');
-      projects = await res.json();
-      render();
-      if (showMessage) showToast('Data refreshed');
-    } catch {
-      if (!projects.length) {
-        projects = DEFAULT_PROJECTS.map((p) => ({ ...p }));
-      }
-      render();
-      if (showMessage) showToast('Loaded local data (run a local server to refresh from JSON)');
+    const remote = await fetchSeedProjects();
+    projects = mergeRemoteProjects(remote);
+    render();
+    if (showMessage) {
+      showToast('Data refreshed — your changes are kept');
     }
+  }
+
+  async function loadInitialData() {
+    const stored = loadStoredProjects();
+    if (stored) {
+      projects = stored;
+      render();
+      return;
+    }
+    projects = await fetchSeedProjects();
+    render();
   }
 
   function bindEvents() {
@@ -380,7 +451,7 @@
   async function init() {
     bindDropZones();
     bindEvents();
-    await refreshData(false);
+    await loadInitialData();
   }
 
   init();
