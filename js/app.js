@@ -3,12 +3,14 @@
     PLANNING: 'Planning',
     IN_PROGRESS: 'In-Progress',
     COMPLETED: 'Completed',
+    DEFERRED: 'Deferred',
   };
 
   const COLUMN_STATUS = {
     planning: STATUS.PLANNING,
     'in-progress': STATUS.IN_PROGRESS,
     completed: STATUS.COMPLETED,
+    deferred: STATUS.DEFERRED,
   };
 
   const STORAGE_KEY = 'bco-projects-v1';
@@ -196,6 +198,7 @@
   function statusToColumnKey(status) {
     if (status === STATUS.IN_PROGRESS) return 'in-progress';
     if (status === STATUS.COMPLETED) return 'completed';
+    if (status === STATUS.DEFERRED) return 'deferred';
     return 'planning';
   }
 
@@ -212,6 +215,8 @@
     } else if (newStatus === STATUS.COMPLETED) {
       if (!updated.startDate) updated.startDate = todayIso();
       updated.endDate = todayIso();
+    } else if (newStatus === STATUS.DEFERRED) {
+      if (!updated.endDate) updated.endDate = todayIso();
     }
     return updated;
   }
@@ -232,6 +237,8 @@
       datesEl.innerHTML = `Start<br>${formatDisplayDate(project.startDate)}<br><br>Expected<br>Closure<br>${formatDisplayDate(project.endDate) || '—'}`;
     } else if (project.status === STATUS.COMPLETED && project.startDate) {
       datesEl.innerHTML = `Start<br>${formatDisplayDate(project.startDate)}<br><br>Closed<br>${formatDisplayDate(project.endDate)}`;
+    } else if (project.status === STATUS.DEFERRED) {
+      datesEl.innerHTML = `Deferred<br>${formatDisplayDate(project.endDate) || '—'}`;
     }
 
     const card = document.createElement('article');

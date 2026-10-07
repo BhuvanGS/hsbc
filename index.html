@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BCO PROJECTs</title>
-    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/styles.css?v=2" />
   </head>
   <body>
     <div class="app">
@@ -40,6 +40,10 @@
         <div class="column completed" data-column="completed">
           <div class="column-header">COMPLETED</div>
           <div class="column-body" data-status="Completed"></div>
+        </div>
+        <div class="column deferred" data-column="deferred">
+          <div class="column-header">DEFERRED</div>
+          <div class="column-body" data-status="Deferred"></div>
         </div>
       </section>
 
@@ -87,6 +91,7 @@
             <option value="Planning">Planning</option>
             <option value="In-Progress">In-Progress</option>
             <option value="Completed">Completed</option>
+            <option value="Deferred">Deferred</option>
           </select>
         </div>
         <div class="form-row">

@@ -13,7 +13,7 @@ body {
 }
 
 .app {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 12px 16px 24px;
 }
@@ -90,16 +90,20 @@ body {
 
 /* Kanban */
 .kanban {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
   gap: 12px;
   margin-bottom: 16px;
+  overflow-x: auto;
+  align-items: stretch;
+  -webkit-overflow-scrolling: touch;
 }
 
 .column {
   border-radius: 12px;
   overflow: hidden;
-  min-height: 280px;
+  min-height: 260px;
+  flex: 1 1 0;
+  min-width: 220px;
   display: flex;
   flex-direction: column;
 }
@@ -144,6 +148,14 @@ body {
 
 .column.completed .column-body {
   background: #b8ddb8;
+}
+
+.column.deferred .column-header {
+  background: #db0011;
+}
+
+.column.deferred .column-body {
+  background: #f4a0a8;
 }
 
 .column-body.drag-over {
@@ -371,10 +383,6 @@ body {
 }
 
 @media (max-width: 900px) {
-  .kanban {
-    grid-template-columns: 1fr;
-  }
-
   .header {
     grid-template-columns: 1fr;
     gap: 8px;
